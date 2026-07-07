@@ -1,8 +1,9 @@
 package httputil
 
 var (
-	// ContentType header value.
+	// ContentType and Accept header value.
 	ContentType = "Content-Type"
+	Accept      = "Accept"
 	// ApplicationJSON content-type.
 	ApplicationJSON = "application/json"
 	// TextHTML content-type.
