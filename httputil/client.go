@@ -3,6 +3,7 @@ package httputil
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type UnexpectedResponseError struct {
@@ -12,5 +13,10 @@ type UnexpectedResponseError struct {
 }
 
 func (e UnexpectedResponseError) Error() string {
-	return fmt.Sprintf("url: %q, status: %d, body: %q: unexpected response status code", e.URL, e.Resp.StatusCode, e.Body)
+	status := "unknown"
+	if e.Resp != nil {
+		status = strconv.Itoa(e.Resp.StatusCode)
+	}
+
+	return fmt.Sprintf("url: %q, status: %s, body: %q: unexpected response status code", e.URL, status, e.Body)
 }
