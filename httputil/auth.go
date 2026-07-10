@@ -29,6 +29,8 @@ const (
 	// ErrMissingAuthorizer is caused by internal configuration errors when evaluating authorization.
 	ErrMissingAuthorizer = AuthError("missing authenticator")
 
+	ErrCouldntAuthenticate = AuthError("could not authenticate request")
+
 	// BasicAuthPrefix as defined by https://datatracker.ietf.org/doc/html/rfc7617
 	BasicAuthPrefix = "Basic "
 
@@ -53,23 +55,28 @@ type TokenAuthenticatorFunc[T any] func(ctx context.Context, token string) (T, e
 type BasicAuthenticatorFunc[T any] func(ctx context.Context, user, pass string) (T, error)
 
 // ClientAuthenticateFunc is the signature of a function used to add authentication to an outbound HTTP request.
-// It also has an opportunity to wrap the httpClient to be used for the request.
+// It also has an opportunity to wrap the httpClient to be used for the request. Should return [ErrCouldntAuthenticate]
+// if the method was not able to provide authorization for this user.
 type ClientAuthenticateFunc[T any] func(r *http.Request, innerClient *http.Client, user T) (*http.Client, error)
 
 // ClientTokenAuthenticatorFunc is the signature of a function used to determine the token that should be added
-// to an outbound HTTP request as authentication.
+// to an outbound HTTP request as authentication. Should return [ErrCouldntAuthenticate] if the method was not able to
+// provide authorization for this user.
 type ClientTokenAuthenticatorFunc[T any] func(ctx context.Context, user T) (string, error)
 
 // ClientBasicAuthenticatorFunc is the signature of a function used to determine the username and password
-// that should be used to add Bsaic authentication to an outbound HTTP request.
+// that should be used to add Bsaic authentication to an outbound HTTP request. Should return [ErrCouldntAuthenticate]
+// if the method was not able to provide authorization for this user.
 type ClientBasicAuthenticatorFunc[T any] func(ctx context.Context, user T) (string, string, error)
 
-// ClientCookieAuthenticatorFunc is the signature of a function used to determine the cookie
-// that should be added to an outbound HTTP request.
+// ClientCookieAuthenticatorFunc is the signature of a function used to determine the cookie that should be added
+// to an outbound HTTP request.  Should return [ErrCouldntAuthenticate] if the method was not able to provide
+// authorization for this user.
 type ClientCookieAuthenticatorFunc[T any] func(ctx context.Context, user T) (*http.Cookie, error)
 
 // ClientWrappingAuthenticatorFunc is the signature of a function used to wrap an http client so that it will
-// add authentication. This is intended for integration with x/oauth2.
+// add authentication. This is intended for integration with x/oauth2.  Should return [ErrCouldntAuthenticate] if the
+// method was not able to provide authorization for this user.
 type ClientWrappingAuthenticatorFunc[T any] func(ctx context.Context, innerClient *http.Client, user T) (*http.Client, error)
 
 // AuthorizeFunc is the signature of a function used to authorize a request.  If unable
