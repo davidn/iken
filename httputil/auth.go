@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -326,4 +327,44 @@ func (s SecurityGroups[T]) Auth(r *http.Request) (T, error) {
 	}
 
 	return user, err
+}
+
+// ClientSecurityGroup are valid if all the authenticate functions succeed.
+type ClientSecurityGroup[T any] []ClientAuthenticateFunc[T]
+
+// Auth authenticates a client request with all the authhenticate functions or returns the first failure.
+func (s ClientSecurityGroup[T]) Auth(r *http.Request, innerClient *http.Client, u T) (*http.Client, error) {
+	var err error
+	outerClient := innerClient
+	modifiedReq := r.Clone(r.Context())
+
+	for _, a := range s {
+		outerClient, err = a(modifiedReq, outerClient, u)
+		if err != nil {
+			return innerClient, err
+		}
+	}
+
+	*r = *modifiedReq
+
+	return outerClient, nil
+}
+
+// ClientSecurityGroups are valid if ANY group is valid.
+type ClientSecurityGroups[T any] []ClientSecurityGroup[T]
+
+// Auth authenticates a client request with the first group that successfully authenticates, or returns
+// [ErrCouldntAuthenticate].
+func (s ClientSecurityGroups[T]) Auth(r *http.Request, innerClient *http.Client, u T) (*http.Client, error) {
+	var err error
+	for _, a := range s {
+		innerClient, err = a.Auth(r, innerClient, u)
+		if errors.Is(err, ErrCouldntAuthenticate) {
+			continue
+		}
+		// return on success or true failure
+		return innerClient, err
+	}
+
+	return innerClient, ErrCouldntAuthenticate
 }
