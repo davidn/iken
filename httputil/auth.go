@@ -30,6 +30,7 @@ const (
 	// ErrMissingAuthorizer is caused by internal configuration errors when evaluating authorization.
 	ErrMissingAuthorizer = AuthError("missing authenticator")
 
+	// ErrCannotAuthenticate indicates an authenticator could not provide credentials for the user. ClientSecurityGroups treats it as "try the next group" rather than a hard failure.````
 	ErrCouldntAuthenticate = AuthError("could not authenticate request")
 
 	// BasicAuthPrefix as defined by https://datatracker.ietf.org/doc/html/rfc7617
