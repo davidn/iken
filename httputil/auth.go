@@ -213,8 +213,6 @@ func BasicClientAuth[T any](fn ClientBasicAuthenticatorFunc[T]) ClientAuthentica
 
 		r.SetBasicAuth(username, password)
 
-		r.BasicAuth()
-
 		return inner, nil
 	}
 }
