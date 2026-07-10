@@ -355,14 +355,17 @@ type ClientSecurityGroups[T any] []ClientSecurityGroup[T]
 // Auth authenticates a client request with the first group that successfully authenticates, or returns
 // [ErrCouldntAuthenticate].
 func (s ClientSecurityGroups[T]) Auth(r *http.Request, innerClient *http.Client, u T) (*http.Client, error) {
-	var err error
 	for _, a := range s {
-		innerClient, err = a.Auth(r, innerClient, u)
+		outerClient, err := a.Auth(r, innerClient, u)
 		if errors.Is(err, ErrCouldntAuthenticate) {
 			continue
 		}
-		// return on success or true failure
-		return innerClient, err
+
+		if err != nil {
+			return innerClient, err
+		}
+
+		return outerClient, nil
 	}
 
 	return innerClient, ErrCouldntAuthenticate
