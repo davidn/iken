@@ -67,7 +67,7 @@ type ClientAuthenticateFunc[T any] func(r *http.Request, innerClient *http.Clien
 type ClientTokenAuthenticatorFunc[T any] func(ctx context.Context, user T) (string, error)
 
 // ClientBasicAuthenticatorFunc is the signature of a function used to determine the username and password
-// that should be used to add Bsaic authentication to an outbound HTTP request. Should return [ErrCouldntAuthenticate]
+// that should be used to add Basic authentication to an outbound HTTP request. Should return [ErrCouldntAuthenticate]
 // if the method was not able to provide authorization for this user.
 type ClientBasicAuthenticatorFunc[T any] func(ctx context.Context, user T) (string, string, error)
 
