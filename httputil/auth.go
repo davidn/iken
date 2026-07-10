@@ -78,7 +78,8 @@ type ClientCookieAuthenticatorFunc[T any] func(ctx context.Context, user T) (*ht
 // ClientWrappingAuthenticatorFunc is the signature of a function used to wrap an http client so that it will
 // add authentication. This is intended for integration with x/oauth2.  Should return [ErrCouldntAuthenticate] if the
 // method was not able to provide authorization for this user.
-type ClientWrappingAuthenticatorFunc[T any] func(ctx context.Context, innerClient *http.Client, user T) (*http.Client, error)
+type ClientWrappingAuthenticatorFunc[T any] func(
+	ctx context.Context, innerClient *http.Client, user T) (*http.Client, error)
 
 // AuthorizeFunc is the signature of a function used to authorize a request.  If unable
 // to authorize the user it returns an error.
