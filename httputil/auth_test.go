@@ -340,7 +340,7 @@ func strClientAuth(_ context.Context, user string) (string, error) {
 		return "", ErrBad
 	}
 
-	return "", httputil.ErrCouldntAuthenticate
+	return "", httputil.ErrCannotAuthenticate
 }
 
 func failClientAuth(_ context.Context, _ string) (string, error) {
@@ -353,7 +353,7 @@ func onlyUser(name string) httputil.ClientTokenAuthenticatorFunc[string] {
 			return "token", nil
 		}
 
-		return "", httputil.ErrCouldntAuthenticate
+		return "", httputil.ErrCannotAuthenticate
 	}
 }
 
@@ -365,7 +365,7 @@ func basicClientAuth(_ context.Context, user string) (string, string, error) {
 		return "", "", ErrBad
 	}
 
-	return "", "", httputil.ErrCouldntAuthenticate
+	return "", "", httputil.ErrCannotAuthenticate
 }
 
 func cookieClientAuth(_ context.Context, user string) (*http.Cookie, error) {
@@ -378,7 +378,7 @@ func cookieClientAuth(_ context.Context, user string) (*http.Cookie, error) {
 		return nil, ErrBad
 	}
 
-	return nil, httputil.ErrCouldntAuthenticate
+	return nil, httputil.ErrCannotAuthenticate
 }
 
 func TestHeaderClientAuth(t *testing.T) {
@@ -392,7 +392,7 @@ func TestHeaderClientAuth(t *testing.T) {
 	tests := []testCase{
 		{"Good", "X-Auth", "good", "token", nil},
 		{"Bad", "X-Auth", "bad", "", ErrBad},
-		{"Couldnt", "X-Auth", "other", "", httputil.ErrCouldntAuthenticate},
+		{"Couldnt", "X-Auth", "other", "", httputil.ErrCannotAuthenticate},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -423,7 +423,7 @@ func TestBearerClientAuth(t *testing.T) {
 	tests := []testCase{
 		{"Good", "Authorization", "good", "Bearer token", nil},
 		{"Bad", "Authorization", "bad", "", ErrBad},
-		{"Couldnt", "Authorization", "other", "", httputil.ErrCouldntAuthenticate},
+		{"Couldnt", "Authorization", "other", "", httputil.ErrCannotAuthenticate},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -454,7 +454,7 @@ func TestQueryClientAuth(t *testing.T) {
 	tests := []testCase{
 		{"Good", "auth", "good", "token", nil},
 		{"Bad", "auth", "bad", "", ErrBad},
-		{"Couldnt", "auth", "other", "", httputil.ErrCouldntAuthenticate},
+		{"Couldnt", "auth", "other", "", httputil.ErrCannotAuthenticate},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -485,7 +485,7 @@ func TestBasicClientAuth(t *testing.T) {
 	tests := []testCase{
 		{"Good", "good", "u", "p", nil},
 		{"Bad", "bad", "", "", ErrBad},
-		{"Couldnt", "other", "", "", httputil.ErrCouldntAuthenticate},
+		{"Couldnt", "other", "", "", httputil.ErrCannotAuthenticate},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -524,7 +524,7 @@ func TestCookieClientAuth(t *testing.T) {
 		{"Good", "good", "token", nil},
 		{"Nil", "nil", "", nil},
 		{"Bad", "bad", "", ErrBad},
-		{"Couldnt", "other", "", httputil.ErrCouldntAuthenticate},
+		{"Couldnt", "other", "", httputil.ErrCannotAuthenticate},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -563,7 +563,7 @@ func TestWrapClientAuth(t *testing.T) {
 			return nil, ErrBad
 		}
 
-		return in, httputil.ErrCouldntAuthenticate
+		return in, httputil.ErrCannotAuthenticate
 	}
 
 	type testCase struct {
@@ -575,7 +575,7 @@ func TestWrapClientAuth(t *testing.T) {
 	tests := []testCase{
 		{"good", "good", wrapped, nil},
 		{"bad", "bad", inner, ErrBad},
-		{"couldnt", "other", inner, httputil.ErrCouldntAuthenticate},
+		{"couldnt", "other", inner, httputil.ErrCannotAuthenticate},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -663,7 +663,7 @@ func TestClientSecurityGroups_Auth(t *testing.T) {
 	tests := []testCase{
 		{"first group succeeds", groups, "a", "token", "", nil},
 		{"falls through to a later group", groups, "b", "", "token", nil},
-		{"none can authenticate", groups, "c", "", "", httputil.ErrCouldntAuthenticate},
+		{"none can authenticate", groups, "c", "", "", httputil.ErrCannotAuthenticate},
 		{"true failure stops iteration", failing, "b", "", "", ErrBad},
 	}
 	for _, tt := range tests {
