@@ -115,7 +115,7 @@ func HeaderClientAuth[T any](key string, fn ClientTokenAuthenticatorFunc[T]) Cli
 			return inner, err
 		}
 
-		r.Header.Add(key, token)
+		r.Header.Set(key, token)
 
 		return inner, nil
 	}
@@ -143,7 +143,7 @@ func BearerClientAuth[T any](key string, fn ClientTokenAuthenticatorFunc[T]) Cli
 			return inner, err
 		}
 
-		r.Header.Add(key, bearerAuthPrefix+token)
+		r.Header.Set(key, bearerAuthPrefix+token)
 
 		return inner, nil
 	}
