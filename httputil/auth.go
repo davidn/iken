@@ -112,7 +112,7 @@ func HeaderClientAuth[T any](key string, fn ClientTokenAuthenticatorFunc[T]) Cli
 	return func(r *http.Request, inner *http.Client, user T) (*http.Client, error) {
 		token, err := fn(r.Context(), user)
 		if err != nil {
-			return inner, err
+			return nil, err
 		}
 
 		r.Header.Set(key, token)
@@ -140,7 +140,7 @@ func BearerClientAuth[T any](key string, fn ClientTokenAuthenticatorFunc[T]) Cli
 	return func(r *http.Request, inner *http.Client, user T) (*http.Client, error) {
 		token, err := fn(r.Context(), user)
 		if err != nil {
-			return inner, err
+			return nil, err
 		}
 
 		r.Header.Set(key, bearerAuthPrefix+token)
@@ -166,7 +166,7 @@ func QueryClientAuth[T any](key string, fn ClientTokenAuthenticatorFunc[T]) Clie
 	return func(r *http.Request, inner *http.Client, user T) (*http.Client, error) {
 		token, err := fn(r.Context(), user)
 		if err != nil {
-			return inner, err
+			return nil, err
 		}
 
 		q := r.URL.Query()
@@ -210,7 +210,7 @@ func BasicClientAuth[T any](fn ClientBasicAuthenticatorFunc[T]) ClientAuthentica
 	return func(r *http.Request, inner *http.Client, user T) (*http.Client, error) {
 		username, password, err := fn(r.Context(), user)
 		if err != nil {
-			return inner, err
+			return nil, err
 		}
 
 		r.SetBasicAuth(username, password)
@@ -236,7 +236,7 @@ func CookieClientAuth[T any](fn ClientCookieAuthenticatorFunc[T]) ClientAuthenti
 	return func(r *http.Request, inner *http.Client, user T) (*http.Client, error) {
 		cookie, err := fn(r.Context(), user)
 		if err != nil {
-			return inner, err
+			return nil, err
 		}
 
 		if cookie != nil {
@@ -251,7 +251,7 @@ func WrapClientAuth[T any](fn ClientWrappingAuthenticatorFunc[T]) ClientAuthenti
 	return func(r *http.Request, inner *http.Client, user T) (*http.Client, error) {
 		client, err := fn(r.Context(), inner, user)
 		if err != nil {
-			return inner, err
+			return nil, err
 		}
 
 		return client, nil
@@ -342,7 +342,7 @@ func (s ClientSecurityGroup[T]) Auth(r *http.Request, innerClient *http.Client, 
 	for _, a := range s {
 		outerClient, err = a(modifiedReq, outerClient, u)
 		if err != nil {
-			return innerClient, err
+			return nil, err
 		}
 	}
 
@@ -364,11 +364,11 @@ func (s ClientSecurityGroups[T]) Auth(r *http.Request, innerClient *http.Client,
 		}
 
 		if err != nil {
-			return innerClient, err
+			return nil, err
 		}
 
 		return outerClient, nil
 	}
 
-	return innerClient, ErrCannotAuthenticate
+	return nil, ErrCannotAuthenticate
 }

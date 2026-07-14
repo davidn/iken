@@ -404,9 +404,9 @@ func TestHeaderClientAuth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.err)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, inner, got)
 			}
 
-			assert.Same(t, inner, got)
 			assert.Equal(t, tt.want, r.Header.Get(tt.key))
 		})
 	}
@@ -435,9 +435,9 @@ func TestBearerClientAuth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.err)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, inner, got)
 			}
 
-			assert.Same(t, inner, got)
 			assert.Equal(t, tt.want, r.Header.Get(tt.key))
 		})
 	}
@@ -466,9 +466,9 @@ func TestQueryClientAuth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.err)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, inner, got)
 			}
 
-			assert.Same(t, inner, got)
 			assert.Equal(t, tt.want, r.URL.Query().Get(tt.key))
 		})
 	}
@@ -497,9 +497,8 @@ func TestBasicClientAuth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.err)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, inner, got)
 			}
-
-			assert.Same(t, inner, got)
 
 			u, p, ok := r.BasicAuth()
 			if tt.err == nil {
@@ -536,9 +535,8 @@ func TestCookieClientAuth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.wantErr)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, inner, got)
 			}
-
-			assert.Same(t, inner, got)
 
 			cookie, cookieErr := r.Cookie("session")
 			if tt.want != "" {
@@ -586,9 +584,8 @@ func TestWrapClientAuth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.err)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, tt.want, got)
 			}
-
-			assert.Same(t, tt.want, got)
 		})
 	}
 }
@@ -631,9 +628,9 @@ func TestClientSecurityGroup_Auth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.err)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, inner, got)
 			}
 
-			assert.Same(t, inner, got)
 			assert.Equal(t, tt.wantA, r.Header.Get("X-A"))
 			assert.Equal(t, tt.wantB, r.Header.Get("X-B"))
 		})
@@ -675,9 +672,9 @@ func TestClientSecurityGroups_Auth(t *testing.T) {
 				assert.ErrorIs(t, err, tt.err)
 			} else {
 				require.NoError(t, err)
+				assert.Same(t, inner, got)
 			}
 
-			assert.Same(t, inner, got)
 			assert.Equal(t, tt.wantA, r.Header.Get("X-A"))
 			assert.Equal(t, tt.wantB, r.Header.Get("X-B"))
 		})
